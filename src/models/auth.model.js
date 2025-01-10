@@ -1,0 +1,90 @@
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const cartSchema = new mongoose.Schema({
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+  },
+  quantity: {
+    type: Number,
+  },
+});
+
+const authSchema = new mongoose.Schema(
+  {
+    fullname: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    term: {
+      type: String,
+      enum: ["true", "false"],
+      default: "false",
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ["admin", "user"],
+      default: "user",
+    },
+    cart: {
+      type: [cartSchema],
+      default: [],
+    },
+
+    profilepicture: {
+      type: String,
+    },
+    forgetPassword: {
+      otp: {
+        type: String,
+      },
+      otpTime: {
+        type: Date,
+      },
+      verify: {
+        type: Boolean,
+      },
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+authSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  } else {
+    const bcryptsalt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, bcryptsalt);
+  }
+});
+
+authSchema.methods.isPasswordMatch = async function (enterPassword) {
+  return bcrypt.compare(enterPassword, this.password);
+};
+
+authSchema.methods.generateAccesstoken = async function () {
+  return jwt.sign({ _id: this._id }, process.env.Accesstoken, {
+    expiresIn: process.env.Accesstokenexpiry,
+  });
+};
+
+const authModel = mongoose.model("User", authSchema);
+
+module.exports = { authModel };
