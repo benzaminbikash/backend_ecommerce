@@ -5,8 +5,6 @@ const { asyncHandler } = require("../utils/asyncHandler");
 
 const addCategory = asyncHandler(async (req, res) => {
   const { title, order } = req.body;
-
-  console.log(title, order);
   if (!title) throw new ApiError("Title is required.", 400);
   if (!order) throw new ApiError("Order is required.", 400);
   const file = req.file?.filename;
@@ -65,7 +63,7 @@ const deleteCategory = asyncHandler(async (req, res) => {
   const category = await categoryModel.findByIdAndDelete(req.params.id);
   res
     .status(200)
-    .json(new ApiResponse("Category added successfully.", category));
+    .json(new ApiResponse("Category deleted successfully.", category));
 });
 
 module.exports = {

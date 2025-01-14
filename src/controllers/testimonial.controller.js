@@ -8,7 +8,7 @@ const addTestimonial = asyncHandler(async (req, res) => {
   if (!name || !description || !profession || !rating)
     throw new ApiError("All fields are required.");
   const file = req.file?.filename;
-  if (!file) throw new ApiError("Image is required.");
+  if (!file) throw new ApiError("Image is required.", 400);
   const testimonail = await testimonialModel.create({
     name,
     description,

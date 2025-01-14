@@ -5,7 +5,6 @@ const testimonialSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
     },
     description: {
       type: String,
@@ -18,8 +17,8 @@ const testimonialSchema = new mongoose.Schema(
     rating: {
       type: Number,
       required: true,
-      min: 0,
-      max: 5,
+      min: [0, "The minimum value of rating is 0."],
+      max: [5, "The maximum value of rating is 5."],
     },
     image: {
       type: String,
