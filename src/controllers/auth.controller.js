@@ -195,6 +195,13 @@ const changePassword = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse("Password changed successfully."));
 });
 
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+  console.log("ID of delete user", id);
+  const user = await authModel.findByIdAndDelete(id);
+  res.status(200).json(new ApiResponse("User Deleted successfully.", user));
+};
+
 module.exports = {
   registration,
   login,
@@ -205,4 +212,5 @@ module.exports = {
   forgetPassword,
   otpVerify,
   changePassword,
+  deleteUser,
 };

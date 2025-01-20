@@ -6,8 +6,7 @@ const { authModel } = require("../models/auth.model");
 const authMiddleware = asyncHandler(async (req, res, next) => {
   try {
     const token =
-      req.cookies?.accesstoken ||
-      req.header("Authorization")?.replace("Bearer ", "");
+      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
     if (!token) throw new ApiError("Token is not available.", 400);
     const { _id } = jwt.verify(token, process.env.Accesstoken);
     const user = await authModel.findById(_id);

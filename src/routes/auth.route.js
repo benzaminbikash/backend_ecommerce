@@ -23,4 +23,7 @@ router.post("/forget-password", auth.forgetPassword);
 router.post("/otp-verify", auth.otpVerify);
 router.post("/change-password", auth.changePassword);
 
+// delete by admin
+router.delete("/user/:id", authMiddleware, adminMiddleware, auth.deleteUser);
+
 module.exports = router;
