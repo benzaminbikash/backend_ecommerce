@@ -1,12 +1,15 @@
-const subattributeModel = require("../models/subattribute.model");
 const { ApiError } = require("../utils/ApiError");
+const subattributeModel = require("../models/subattribute.model");
 const { ApiResponse } = require("../utils/ApiResponse");
 const { asyncHandler } = require("../utils/asyncHandler");
+const { validateMongodbId } = require("../utils/validateMongodb");
 
 const addSubAttribute = asyncHandler(async (req, res) => {
   const { attribute } = req.body;
-  const findSubAttribute = await subattributeModel.findOne({ attribute });
-  if (findSubAttribute) throw new ApiError("You can add same attribute.");
+  validateMongodbId(attribute);
+  const existAttribute = await subattributeModel.findOne({ attribute });
+  if (existAttribute)
+    throw new ApiError("This attribute already on the exits.", 400);
   const subattribute = await subattributeModel.create(req.body);
   res
     .status(201)

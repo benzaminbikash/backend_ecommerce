@@ -6,7 +6,7 @@ const { emailConfig } = require("../utils/emailConfig");
 const bcrypt = require("bcrypt");
 
 const registration = asyncHandler(async (req, res) => {
-  const { email, password, fullname, confirmationpassword, phone, term } =
+  const { email, password, fullname, confirmationpassword, phone, term, role } =
     req.body;
   if (!fullname) throw new ApiError("Fullname is required.", 400);
   if (!email) throw new ApiError("Email is required.", 400);
@@ -24,6 +24,7 @@ const registration = asyncHandler(async (req, res) => {
     password,
     phone,
     term,
+    role,
   });
   res
     .status(201)

@@ -20,6 +20,7 @@ const carsoual = require("./src/routes/carsoual.route");
 const banner = require("./src/routes/banner.route");
 const attribute = require("./src/routes/attribute.route");
 const subattribute = require("./src/routes/subattribute.route");
+const subcategory = require("./src/routes/subcategory.route");
 
 // // Middleware
 const corsOptions = {
@@ -45,6 +46,7 @@ server.use(
 );
 server.use(morgan("dev"));
 server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
 server.use("/uploads", express.static("uploads"));
 server.use(cookieParser());
 
@@ -58,6 +60,7 @@ server.use("/api/v4", carsoual);
 server.use("/api/v4", banner);
 server.use("/api/v4", attribute);
 server.use("/api/v4", subattribute);
+server.use("/api/v4", subcategory);
 
 // // Error Middleware
 server.use(notFound);

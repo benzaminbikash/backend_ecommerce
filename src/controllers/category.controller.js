@@ -6,6 +6,9 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const addCategory = asyncHandler(async (req, res) => {
   const { title, order } = req.body;
   if (!title) throw new ApiError("Title is required.", 400);
+  const existcategory = await categoryModel.findOne({ title });
+  if (existcategory)
+    throw new ApiError("This name of category is exist. Please write new one.");
   if (!order) throw new ApiError("Order is required.", 400);
   const file = req.file?.filename;
   if (!file) throw new ApiError("Image is required.", 400);

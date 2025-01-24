@@ -15,7 +15,6 @@ const errorMiddleware = (error, req, res, next) => {
       stack: error.stack,
     });
   }
-
   if (error.name === "ValidationError") {
     const messages = Object.values(error.errors).map((val) => val.message);
     return res.status(400).json({

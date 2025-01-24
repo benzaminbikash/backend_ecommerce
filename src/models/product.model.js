@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    discountPrice: {
+    priceafterdiscount: {
       type: Number,
       required: true,
     },
@@ -28,17 +28,31 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
     images: {
-      type: [],
+      type: [String],
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
-    stock: {
-      type: String,
+    subCategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubCategory",
+      required: true,
     },
-    attributes: [{ name: String, value: [] }],
+
+    stock: {
+      type: Number,
+    },
+    attributes: [
+      {
+        title: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Attribute",
+        },
+        values: [String],
+      },
+    ],
   },
   {
     timestamps: true,

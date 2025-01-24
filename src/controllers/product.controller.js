@@ -11,10 +11,14 @@ const addProduct = asyncHandler(async (req, res) => {
     data.push(item.filename);
   });
   const { title, description, price, category } = req.body;
+
   if (!title) throw new ApiError("Title is required.", 400);
-  if (!description) throw new ApiError("Title is required.", 400);
-  if (!price) throw new ApiError("Title is required.", 400);
+  const checktitle = await productModel.findOne({ title });
+  if (checktitle) throw new ApiError("Title must be unique.");
+  if (!description) throw new ApiError("Description is required.", 400);
+  if (!price) throw new ApiError("Price is required.", 400);
   if (!category) throw new ApiError("Category is required.");
+
   const product = await productModel.create({
     ...req.body,
     images: data,
@@ -59,7 +63,7 @@ const getProducts = asyncHandler(async (req, res) => {
       throw new Error("No more products");
     }
   }
-  const data = await query;
+  const data = await query.populate("category subCategory attributes.title");
   if (data.length === 0) {
     throw new Error("No product in the list");
   } else {
