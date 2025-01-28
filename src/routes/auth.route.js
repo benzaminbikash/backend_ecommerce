@@ -10,6 +10,8 @@ const {
 router.route("/registration").post(auth.registration);
 router.route("/login").post(auth.login);
 router.route("/login-admin").post(auth.loginAdmin);
+router.route("/refresh").post(auth.refresh);
+router.route("/logout").get(auth.logout);
 
 // information
 router.get("/allusers", authMiddleware, adminMiddleware, auth.getUsersByAdmin);

@@ -80,8 +80,17 @@ authSchema.methods.isPasswordMatch = async function (enterPassword) {
 };
 
 authSchema.methods.generateAccesstoken = async function () {
-  return jwt.sign({ _id: this._id }, process.env.Accesstoken, {
-    expiresIn: process.env.Accesstokenexpiry,
+  return jwt.sign(
+    { _id: this._id, role: this.role, fullname: this.fullname },
+    process.env.Accesstoken,
+    {
+      expiresIn: process.env.Accesstokenexpiry,
+    }
+  );
+};
+authSchema.methods.generaterefreshtoken = async function () {
+  return jwt.sign({ _id: this._id }, process.env.Refreshtoken, {
+    expiresIn: process.env.Refreshtokenexpiry,
   });
 };
 

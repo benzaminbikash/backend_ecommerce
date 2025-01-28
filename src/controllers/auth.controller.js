@@ -4,6 +4,7 @@ const { ApiResponse } = require("../utils/ApiResponse");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { emailConfig } = require("../utils/emailConfig");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const registration = asyncHandler(async (req, res) => {
   const { email, password, fullname, confirmationpassword, phone, term, role } =
@@ -37,21 +38,36 @@ const login = asyncHandler(async (req, res) => {
     throw new ApiError("Email and password are required.");
   const existuser = await authModel.findOne({ email });
   if (existuser && (await existuser.isPasswordMatch(password))) {
-    const user = await authModel.findById(existuser._id).select("-password");
     const token = await existuser.generateAccesstoken();
-    res
-      .cookie("accesstoken", token, {
-        httpOnly: true,
-        secure: true,
-      })
-      .status(200)
-      .json({
-        message: "Login successfully.",
-        token,
-        data: user,
-      });
+    const refreshtoken = await existuser.generaterefreshtoken();
+    res.status(200).json({
+      accessToken: token,
+      refreshToken: refreshtoken,
+    });
   } else {
     throw new ApiError("Invalid credential.", 404);
+  }
+});
+
+const refresh = asyncHandler(async (req, res) => {
+  const cookies = req.body.refreshToken;
+  console.log("cookies", cookies);
+  if (!cookies) throw new ApiError("Not authorized/No Refresh Token.", 400);
+  try {
+    const decoded = jwt.verify(cookies, process.env.Refreshtoken);
+    const user = await authModel.findById(decoded._id);
+    if (!user) throw new ApiError("User not found", 404);
+    const accessToken = await user.generateAccesstoken();
+    const refreshToken = await user.generaterefreshtoken();
+    res.status(200).json({ accessToken, refreshToken });
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      throw new ApiError("Refresh token expired.", 403);
+    } else if (error.name === "JsonWebTokenError") {
+      throw new ApiError("Token is not valid.", 403);
+    } else {
+      throw new ApiError("An unknown error occurred.", 500);
+    }
   }
 });
 
@@ -64,19 +80,11 @@ const loginAdmin = asyncHandler(async (req, res) => {
     if (existuser.role != "admin") {
       throw new ApiError("You are not admin", 400);
     } else {
-      const user = await authModel.findById(existuser._id).select("-password");
-      const token = await existuser.generateAccesstoken();
-      const cookieOptions = {
-        httpOnly: false,
-        secure: false,
-        // sameSite: "None",
-        maxAge: 24 * 60 * 60 * 1000,
-      };
-      res.cookie("token", token, cookieOptions);
+      const accessToken = await existuser.generateAccesstoken();
+      const refreshtoken = await existuser.generaterefreshtoken();
       res.status(200).json({
-        message: "Login admin successfully.",
-        token,
-        data: user,
+        accessToken: accessToken,
+        refreshToken: refreshtoken,
       });
     }
   } else {
@@ -203,6 +211,19 @@ const deleteUser = async (req, res) => {
   res.status(200).json(new ApiResponse("User Deleted successfully.", user));
 };
 
+const logout = asyncHandler(async (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204);
+  res
+    .clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    })
+    .status(200)
+    .json(new ApiResponse("Logout Successfully."));
+});
+
 module.exports = {
   registration,
   login,
@@ -214,4 +235,6 @@ module.exports = {
   otpVerify,
   changePassword,
   deleteUser,
+  refresh,
+  logout,
 };

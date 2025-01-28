@@ -5,16 +5,15 @@ const { authModel } = require("../models/auth.model");
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
   try {
-    const token =
-      req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
-    if (!token) throw new ApiError("Token is not available.", 400);
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) throw new ApiError("Unauthorized request", 403);
     const { _id } = jwt.verify(token, process.env.Accesstoken);
-    const user = await authModel.findById(_id);
-    if (!user) throw new ApiError("Invalid token.");
+    const user = await authModel.findById(_id).select("-password ");
+    if (!user) throw new ApiError("Invalid Access token", 400);
     req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(error.message, 400);
+    throw new ApiError(error?.message, 400);
   }
 });
 

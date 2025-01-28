@@ -8,8 +8,8 @@ var carsoualSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  carsoual: {
-    type: [],
+  carsoualimage: {
+    type: [String],
     required: true,
   },
 });
