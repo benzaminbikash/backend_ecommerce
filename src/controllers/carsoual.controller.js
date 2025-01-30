@@ -37,23 +37,46 @@ const deleteCarsoual = asyncHandler(async (req, res) => {
 });
 
 const updateCarsoual = asyncHandler(async (req, res) => {
-  const files = req.files.filename;
-  const data = [];
-  req.files.map((item) => {
-    data.push(item.filename);
-  });
-  if (files) {
-    await carsoualModel.findByIdAndUpdate(req.params.id, {
-      ...req.body,
-      carsoualimage: data,
-    });
-  } else {
-    await carsoualModel.findByIdAndUpdate(req.params.id, req.body);
+  const oldData = await carsoualModel.findById(req.params.id);
+
+  if (!oldData) throw new ApiError("Carousel not found.");
+
+  let updatedImages = [...oldData.carsoualimage];
+
+  if (req.body.imagesToRemove) {
+    const imagesToRemove = JSON.parse(req.body.imagesToRemove);
+    updatedImages = updatedImages.filter(
+      (image) => !imagesToRemove.includes(image)
+    );
   }
-  const carsoual = await carsoualModel.findById(req.params.id);
+
+  if (req.files && req.files.length > 0) {
+    req.files.forEach((file) => {
+      const indexMatch = Object.keys(req.body).find((key) =>
+        key.startsWith("image_")
+      );
+
+      if (indexMatch) {
+        const index = parseInt(indexMatch.split("_")[1]);
+        updatedImages[index] = file.filename;
+      } else {
+        updatedImages.push(file.filename);
+      }
+    });
+  }
+
+  const updatedCarousel = await carsoualModel.findByIdAndUpdate(
+    req.params.id,
+    {
+      ...req.body,
+      carsoualimage: updatedImages,
+    },
+    { new: true }
+  );
+
   res
     .status(200)
-    .json(new ApiResponse("Carsoual updated successfully.", carsoual));
+    .json(new ApiResponse("Carousel updated successfully.", updatedCarousel));
 });
 
 module.exports = {
