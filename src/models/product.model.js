@@ -53,6 +53,9 @@ const productSchema = new mongoose.Schema(
         values: [String],
       },
     ],
+    orderIndex: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

@@ -5,6 +5,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { emailConfig } = require("../utils/emailConfig");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { OTPMessage } = require("../utils/Message");
 
 const registration = asyncHandler(async (req, res) => {
   const { email, password, fullname, confirmationpassword, phone, term, role } =
@@ -128,25 +129,12 @@ const forgetPassword = asyncHandler(async (req, res) => {
       "forgetPassword.otpTime": time,
     },
   });
-  const html = `
-  <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
-    <div style="text-align: center;">
-      <img src="https://r2.erweima.ai/imgcompressed/compressed_b10c65c02342a7b502db4a7c4a6e9c40.webp" alt="Company Logo" style="width: 100px; margin-bottom: 20px;">
-    </div>
-    <h2 style="color: #333; text-align: center;">Password Recovery</h2>
-    <p style="font-size: 16px; color: #555; text-align: center;">
-      Hi there! You requested to reset your password. Your 4-digit OTP is below:
-    </p>
-    <div style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 5px; margin: 20px 0;">
-      <p style="font-size: 30px; color: #e67e22; font-weight: bold;">${otp}</p>
-    </div>
-    <p style="font-size: 16px; color: #555; text-align: center;">
-      This OTP is valid for <strong>5 minutes</strong> only. If you did not request this, please ignore this email.
-    </p>
-    <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
-  </div>
-`;
-  await emailConfig(user.email, "Did you forget your password?", html);
+
+  await emailConfig(
+    user.email,
+    "Did you forget your password?",
+    OTPMessage(otp)
+  );
   res.status(200).json(new ApiResponse("Please check the mail."));
 });
 

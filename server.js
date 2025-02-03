@@ -21,23 +21,9 @@ const banner = require("./src/routes/banner.route");
 const attribute = require("./src/routes/attribute.route");
 const subattribute = require("./src/routes/subattribute.route");
 const subcategory = require("./src/routes/subcategory.route");
+const contact = require("./src/routes/contact.route");
 
 // // Middleware
-const corsOptions = {
-  origin: "http://localhost:5173/",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Origin",
-    "X-Requested-With",
-    "Accept",
-    "x-client-key",
-    "x-client-token",
-    "x-client-secret",
-    "Authorization",
-  ],
-  credentials: true,
-};
 server.use(
   cors({
     origin: true,
@@ -61,6 +47,7 @@ server.use("/api/v4", banner);
 server.use("/api/v4", attribute);
 server.use("/api/v4", subattribute);
 server.use("/api/v4", subcategory);
+server.use("/api/v4", contact);
 
 // // Error Middleware
 server.use(notFound);
