@@ -18,7 +18,7 @@ const registration = asyncHandler(async (req, res) => {
     throw new ApiError("Confirmation Password is required.", 400);
   if (password !== confirmationpassword)
     throw new ApiError("Password and confirmation password are not match.");
-  const exituser = await authModel.findOne({ email: email });
+
   if (exituser) throw new ApiError("Email already exits.");
   const user = await authModel.create({
     email,
@@ -211,6 +211,73 @@ const logout = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse("Logout Successfully."));
 });
+const addCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { product, quantity, attributes } = req.body;
+  if (!product) throw new ApiError("Product is required.", 400);
+  if (!quantity || quantity <= 0)
+    throw new ApiError("Quantity must be greater than 0.", 400);
+  const user = await authModel.findById(_id);
+  if (!user) throw new ApiError("User not found.", 404);
+  const existProduct = user.cart.find(
+    (item) => item.product.toString() === product
+  );
+  if (existProduct) {
+    throw new ApiError("Product already in cart.", 400);
+  }
+  user.cart.push({
+    product: product,
+    quantity: quantity,
+    attributes: attributes,
+  });
+  await user.save();
+  res.status(200).json(new ApiResponse("Product added to cart successfully."));
+});
+
+const removeCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { product } = req.body;
+  if (!product) throw new ApiError("Product is required.", 400);
+  const user = await authModel.findById(_id);
+  const existProduct = user.cart.find(
+    (item) => item.product.toString() === product
+  );
+  if (existProduct) {
+    user.cart.pull({
+      product: product,
+    });
+  }
+  await user.save();
+  res.status(200).json(new ApiResponse("Product remove from the cart."));
+});
+
+const increaseCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { product } = req.body;
+  if (!product) throw new ApiError("Product is required.", 400);
+  const user = await authModel.findById(_id);
+  if (!user) throw new ApiError("User not found.", 404);
+  const existProduct = user.cart.find(
+    (item) => item.product.toString() === product
+  );
+  existProduct.quantity += 1;
+  await user.save();
+  res.status(200).json(new ApiResponse("Product Quantity Increased."));
+});
+
+const decreaseCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { product } = req.body;
+  if (!product) throw new ApiError("Product is required.", 400);
+  const user = await authModel.findById(_id);
+  if (!user) throw new ApiError("User not found.", 404);
+  const existProduct = user.cart.find(
+    (item) => item.product.toString() === product
+  );
+  existProduct.quantity -= 1;
+  await user.save();
+  res.status(200).json(new ApiResponse("Product Quantity Decreased."));
+});
 
 module.exports = {
   registration,
@@ -225,4 +292,8 @@ module.exports = {
   deleteUser,
   refresh,
   logout,
+  addCart,
+  removeCart,
+  increaseCart,
+  decreaseCart,
 };

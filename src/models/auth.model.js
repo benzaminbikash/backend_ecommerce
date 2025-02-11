@@ -10,6 +10,15 @@ const cartSchema = new mongoose.Schema({
   quantity: {
     type: Number,
   },
+  attributes: [
+    {
+      title: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Attribute",
+      },
+      values: [String],
+    },
+  ],
 });
 
 const authSchema = new mongoose.Schema(

@@ -16,3 +16,5 @@ var carsoualSchema = new mongoose.Schema({
 
 const carsoualModel = mongoose.model("Carsoual", carsoualSchema);
 module.exports = carsoualModel;
+
+

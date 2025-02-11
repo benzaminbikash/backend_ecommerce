@@ -28,4 +28,10 @@ router.post("/change-password", auth.changePassword);
 // delete by admin
 router.delete("/user/:id", authMiddleware, adminMiddleware, auth.deleteUser);
 
+// cart
+router.route("/cart").post(authMiddleware, auth.addCart);
+router.route("/removecart").post(authMiddleware, auth.removeCart);
+router.route("/cart-increase").post(authMiddleware, auth.increaseCart);
+router.route("/cart-decrease").post(authMiddleware, auth.decreaseCart);
+
 module.exports = router;
