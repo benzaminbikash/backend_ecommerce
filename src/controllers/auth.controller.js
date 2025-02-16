@@ -18,8 +18,8 @@ const registration = asyncHandler(async (req, res) => {
     throw new ApiError("Confirmation Password is required.", 400);
   if (password !== confirmationpassword)
     throw new ApiError("Password and confirmation password are not match.");
-
-  if (exituser) throw new ApiError("Email already exits.");
+  const existUser = await authModel.findOne({ email });
+  if (existUser) throw new ApiError("Email already exits.");
   const user = await authModel.create({
     email,
     fullname,
@@ -279,6 +279,16 @@ const decreaseCart = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse("Product Quantity Decreased."));
 });
 
+const emptyCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const user = await authModel.findById(_id);
+  user.cart = [];
+  await user.save();
+  res
+    .status(200)
+    .json(new ApiResponse("Your cart is empty after order products."));
+});
+
 module.exports = {
   registration,
   login,
@@ -296,4 +306,5 @@ module.exports = {
   removeCart,
   increaseCart,
   decreaseCart,
+  emptyCart,
 };

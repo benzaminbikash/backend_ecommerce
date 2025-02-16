@@ -33,5 +33,6 @@ router.route("/cart").post(authMiddleware, auth.addCart);
 router.route("/removecart").post(authMiddleware, auth.removeCart);
 router.route("/cart-increase").post(authMiddleware, auth.increaseCart);
 router.route("/cart-decrease").post(authMiddleware, auth.decreaseCart);
+router.route("/cart-empty").get(authMiddleware, auth.emptyCart);
 
 module.exports = router;

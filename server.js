@@ -23,6 +23,7 @@ const subattribute = require("./src/routes/subattribute.route");
 const subcategory = require("./src/routes/subcategory.route");
 const contact = require("./src/routes/contact.route");
 const address = require("./src/routes/address.route");
+const order = require("./src/routes/order.route");
 
 // // Middleware
 server.use(
@@ -50,6 +51,7 @@ server.use("/api/v4", subattribute);
 server.use("/api/v4", subcategory);
 server.use("/api/v4", contact);
 server.use("/api/v4", address);
+server.use("/api/v4", order);
 
 // // Error Middleware
 server.use(notFound);

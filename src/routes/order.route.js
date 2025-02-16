@@ -1,18 +1,14 @@
-const mongoose = require("mongoose");
+const express = require("express");
+const router = new express.Router();
+const order = require("../controllers/order.controller");
+const {
+  authMiddleware,
+  adminMiddleware,
+} = require("../middleware/auth.middleware");
 
-var orderSchema = new mongoose.Schema({
-  products: [
-    {
-      product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    },
-  ],
-  orderBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-});
+router.get("/order", authMiddleware, adminMiddleware, order.allOrder);
+router.post("/order", order.postOrder);
+router.get("/myorder", authMiddleware, order.userOrder);
+router.put("/order/:id", authMiddleware, adminMiddleware, order.updateOrder);
 
-module.exports = mongoose.model("Order", orderSchema);
+module.exports = router;
