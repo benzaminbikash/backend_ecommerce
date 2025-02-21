@@ -5,9 +5,10 @@ const {
   authMiddleware,
   adminMiddleware,
 } = require("../middleware/auth.middleware");
+const { upload } = require("../middleware/upload.middleware");
 
 router.get("/order", authMiddleware, adminMiddleware, order.allOrder);
-router.post("/order", order.postOrder);
+router.post("/order", upload.single("image"), order.postOrder);
 router.get("/myorder", authMiddleware, order.userOrder);
 router.put("/order/:id", authMiddleware, adminMiddleware, order.updateOrder);
 

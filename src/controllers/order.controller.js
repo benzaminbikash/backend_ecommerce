@@ -3,8 +3,31 @@ const { ApiResponse } = require("../utils/ApiResponse");
 const { asyncHandler } = require("../utils/asyncHandler");
 
 const postOrder = asyncHandler(async (req, res) => {
-  const order = await orderModel.create(req.body);
-  res.status(201).json(new ApiResponse("Order is successfully done.", order));
+  try {
+    const customvalue = Math.floor(Math.random() * 10000);
+    const deliveryid = customvalue.toString().padEnd(5, "0");
+    let products = req.body.products;
+    if (typeof products === "string") {
+      products = JSON.parse(products);
+    }
+    const orderData = {
+      ...req.body,
+      products,
+      deliveryid,
+    };
+    if (req.body.payment_method !== "cashondelivery") {
+      if (!req.file || !req.file.filename) {
+        return res
+          .status(400)
+          .json({ message: "Payment proof image is required" });
+      }
+      orderData.onlinepayimage = req.file.filename;
+    }
+    const order = await orderModel.create(orderData);
+    res.status(201).json(new ApiResponse("Order is successfully done.", order));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 const allOrder = asyncHandler(async (req, res) => {
@@ -36,7 +59,5 @@ const updateOrder = asyncHandler(async (req, res) => {
     .status(202)
     .json(new ApiResponse("Update Order Status and Order Number.", data));
 });
-
-const cancelOrder = asyncHandler(async (req, res) => {});
 
 module.exports = { postOrder, allOrder, userOrder, updateOrder };

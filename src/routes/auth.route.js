@@ -9,7 +9,6 @@ const {
 // register and login
 router.route("/registration").post(auth.registration);
 router.route("/login").post(auth.login);
-router.route("/login-admin").post(auth.loginAdmin);
 router.route("/refresh").post(auth.refresh);
 router.route("/logout").get(auth.logout);
 
@@ -24,6 +23,12 @@ router.put("/user", authMiddleware, auth.updateProfile);
 router.post("/forget-password", auth.forgetPassword);
 router.post("/otp-verify", auth.otpVerify);
 router.post("/change-password", auth.changePassword);
+// change password with old
+router.put(
+  "/changepasswordwithold",
+  authMiddleware,
+  auth.passwordChangeFromOld
+);
 
 // delete by admin
 router.delete("/user/:id", authMiddleware, adminMiddleware, auth.deleteUser);
@@ -33,6 +38,6 @@ router.route("/cart").post(authMiddleware, auth.addCart);
 router.route("/removecart").post(authMiddleware, auth.removeCart);
 router.route("/cart-increase").post(authMiddleware, auth.increaseCart);
 router.route("/cart-decrease").post(authMiddleware, auth.decreaseCart);
-router.route("/cart-empty").get(authMiddleware, auth.emptyCart);
+router.route("/cart-empty").post(authMiddleware, auth.emptyCart);
 
 module.exports = router;

@@ -7,7 +7,6 @@ const notFound = (req, res, next) => {
 
 const errorMiddleware = (error, req, res, next) => {
   const statusCode = error.statusCode || 500;
-
   if (error.code === 11000) {
     const field = Object.keys(error.keyValue)[0];
     return res.status(400).json({
@@ -15,6 +14,7 @@ const errorMiddleware = (error, req, res, next) => {
       stack: error.stack,
     });
   }
+
   if (error.name === "ValidationError") {
     const messages = Object.values(error.errors).map((val) => val.message);
     return res.status(400).json({

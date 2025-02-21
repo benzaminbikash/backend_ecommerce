@@ -41,9 +41,13 @@ const login = asyncHandler(async (req, res) => {
   if (existuser && (await existuser.isPasswordMatch(password))) {
     const token = await existuser.generateAccesstoken();
     const refreshtoken = await existuser.generaterefreshtoken();
+    const user = await authModel
+      .findById(existuser._id)
+      .select("-password -term -cart -forgetPassword");
     res.status(200).json({
       accessToken: token,
       refreshToken: refreshtoken,
+      data: user,
     });
   } else {
     throw new ApiError("Invalid credential.", 404);
@@ -69,27 +73,6 @@ const refresh = asyncHandler(async (req, res) => {
     } else {
       throw new ApiError("An unknown error occurred.", 500);
     }
-  }
-});
-
-const loginAdmin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    throw new ApiError("Email and password are required.");
-  const existuser = await authModel.findOne({ email });
-  if (existuser && (await existuser.isPasswordMatch(password))) {
-    if (existuser.role != "admin") {
-      throw new ApiError("You are not admin", 400);
-    } else {
-      const accessToken = await existuser.generateAccesstoken();
-      const refreshtoken = await existuser.generaterefreshtoken();
-      res.status(200).json({
-        accessToken: accessToken,
-        refreshToken: refreshtoken,
-      });
-    }
-  } else {
-    throw new ApiError("Invalid credential.", 400);
   }
 });
 
@@ -289,13 +272,34 @@ const emptyCart = asyncHandler(async (req, res) => {
     .json(new ApiResponse("Your cart is empty after order products."));
 });
 
+const passwordChangeFromOld = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const user = await authModel.findById(_id);
+  const { oldpassword, password, confirmationpassword } = req.body;
+  if (password != confirmationpassword)
+    throw new ApiError("Password and confirmation password are not match.");
+  if (password.length < 6 || confirmationpassword < 6)
+    throw new ApiError("Password length must be greater than 6.", 400);
+  const comparepassword = await bcrypt.compare(oldpassword, user.password);
+  if (comparepassword) {
+    user.password = password;
+    user.save();
+    return res.status(200).json({
+      message: "Password Change Successfully.",
+    });
+  } else {
+    return res.status(400).json({
+      message: "Old password is not correct.",
+    });
+  }
+});
+
 module.exports = {
   registration,
   login,
   getUsersByAdmin,
   userInfo,
   updateProfile,
-  loginAdmin,
   forgetPassword,
   otpVerify,
   changePassword,
@@ -307,4 +311,5 @@ module.exports = {
   increaseCart,
   decreaseCart,
   emptyCart,
+  passwordChangeFromOld,
 };

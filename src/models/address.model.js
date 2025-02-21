@@ -17,7 +17,7 @@ var addressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  address: {
+  province: {
     type: String,
     required: true,
   },
@@ -25,12 +25,12 @@ var addressSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  city: {
+  municipality: {
     type: String,
     required: true,
   },
-  zipCode: {
-    type: Number,
+  address: {
+    type: String,
     required: true,
   },
   addressType: {
