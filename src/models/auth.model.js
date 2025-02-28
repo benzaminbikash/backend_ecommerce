@@ -30,10 +30,24 @@ const authSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
+      validate: {
+        validator: function (email) {
+          return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+        },
+        message: "Email is not valid.",
+      },
     },
     phone: {
       type: String,
       required: true,
+      unique: true,
+      validate: {
+        validator: function (phone) {
+          return /^(98|97|96)\d{8}$/.test(phone);
+        },
+        message: "Phone number is not valid.",
+      },
     },
     password: {
       type: String,

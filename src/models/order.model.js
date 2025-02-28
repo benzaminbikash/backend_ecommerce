@@ -44,12 +44,12 @@ var orderModel = new mongoose.Schema(
       enum: ["cashondelivery", "esewa", "khalti", "ime-pay"],
       required: true,
     },
-    deliveryid: {
-      type: Number,
+    transactionid: {
+      type: String,
     },
     status: {
       type: String,
-      enum: ["Pending", "On the way", "Delivery", "Cancel"],
+      enum: ["Pending", "Confirm", "Processing", "Delivered", "Cancel"],
       default: "Pending",
     },
   },

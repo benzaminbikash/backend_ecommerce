@@ -4,8 +4,6 @@ const { asyncHandler } = require("../utils/asyncHandler");
 
 const postOrder = asyncHandler(async (req, res) => {
   try {
-    const customvalue = Math.floor(Math.random() * 10000);
-    const deliveryid = customvalue.toString().padEnd(5, "0");
     let products = req.body.products;
     if (typeof products === "string") {
       products = JSON.parse(products);
@@ -13,7 +11,6 @@ const postOrder = asyncHandler(async (req, res) => {
     const orderData = {
       ...req.body,
       products,
-      deliveryid,
     };
     if (req.body.payment_method !== "cashondelivery") {
       if (!req.file || !req.file.filename) {
@@ -33,21 +30,31 @@ const postOrder = asyncHandler(async (req, res) => {
 const allOrder = asyncHandler(async (req, res) => {
   const order = await orderModel
     .find()
-    .populate("address")
+    .populate("user shippingAddress billingAddress", "-password")
     .populate({
       path: "products.product",
       model: "Product",
     })
     .populate({
-      path: "products.attributes.title",
-      model: "Attribute",
+      path: "products.attributes",
+      populate: { path: "title", model: "Attribute" },
     });
   res.status(200).json(new ApiResponse("All order.", order));
 });
 
 const userOrder = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const order = await orderModel.findOne({ user: _id });
+  const order = await orderModel
+    .find({ user: _id })
+    .populate("user shippingAddress billingAddress", "-password")
+    .populate({
+      path: "products.product",
+      model: "Product",
+    })
+    .populate({
+      path: "products.attributes",
+      populate: { path: "title", model: "Attribute" },
+    });
   res.status(200).json(new ApiResponse("My Order.", order));
 });
 
@@ -55,9 +62,7 @@ const updateOrder = asyncHandler(async (req, res) => {
   const data = await orderModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
-  res
-    .status(202)
-    .json(new ApiResponse("Update Order Status and Order Number.", data));
+  res.status(202).json(new ApiResponse("Update Order Status.", data));
 });
 
 module.exports = { postOrder, allOrder, userOrder, updateOrder };
