@@ -11,6 +11,8 @@ router.route("/registration").post(auth.registration);
 router.route("/login").post(auth.login);
 router.route("/refresh").post(auth.refresh);
 router.route("/logout").get(auth.logout);
+router.route("/verify-account").put(auth.verifyUserAccount);
+router.route("/resend-otp").put(auth.resendOtpforVerify);
 
 // information
 router.get("/allusers", authMiddleware, adminMiddleware, auth.getUsersByAdmin);

@@ -72,6 +72,18 @@ const authSchema = new mongoose.Schema(
     profilepicture: {
       type: String,
     },
+    // verify logic
+    isVerify: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+    },
+    otpexpiry: {
+      type: Date,
+    },
+
     forgetPassword: {
       otp: {
         type: String,

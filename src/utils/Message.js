@@ -43,4 +43,26 @@ function OTPMessage(otp) {
   return html;
 }
 
-module.exports = { EmailMessage, OTPMessage };
+function verifyAccount(otp) {
+  const html = `
+    <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+      <div style="text-align: center;">
+        <img src="https://r2.erweima.ai/imgcompressed/compressed_b10c65c02342a7b502db4a7c4a6e9c40.webp" alt="Company Logo" style="width: 100px; margin-bottom: 20px;">
+      </div>
+      <h2 style="color: #333; text-align: center;">Verify Your Account</h2>
+      <p style="font-size: 16px; color: #555; text-align: center;">
+        Welcome! Thank you for signing up. To complete your registration, please use the OTP below to verify your account:
+      </p>
+      <div style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 5px; margin: 20px 0;">
+        <p style="font-size: 30px; color: #e67e22; font-weight: bold;">${otp}</p>
+      </div>
+      <p style="font-size: 16px; color: #555; text-align: center;">
+        This OTP is valid for <strong>5 minutes</strong> only. If you did not sign up, please ignore this email.
+      </p>
+      <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
+    </div>
+  `;
+  return html;
+}
+
+module.exports = { EmailMessage, OTPMessage, verifyAccount };

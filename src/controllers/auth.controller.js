@@ -5,7 +5,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { emailConfig } = require("../utils/emailConfig");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { OTPMessage } = require("../utils/Message");
+const { OTPMessage, verifyAccount } = require("../utils/Message");
 
 const registration = asyncHandler(async (req, res) => {
   const { email, password, fullname, confirmationpassword, phone, term, role } =
@@ -20,6 +20,10 @@ const registration = asyncHandler(async (req, res) => {
     throw new ApiError("Password and confirmation password are not match.");
   const existUser = await authModel.findOne({ email });
   if (existUser) throw new ApiError("Email already exits.");
+
+  let otprandom = Math.floor(Math.random() * 9999);
+  const otp = otprandom.toString().padEnd(4, "0");
+  const time = new Date(Date.now() + 5 * 60 * 1000);
   const user = await authModel.create({
     email,
     fullname,
@@ -27,10 +31,48 @@ const registration = asyncHandler(async (req, res) => {
     phone,
     term,
     role,
+    otp: otp,
+    otpexpiry: time,
   });
+  await emailConfig(email, "Verify your account.", verifyAccount(otp));
   res
     .status(201)
-    .json(new ApiResponse("User registration successfully.", user));
+    .json(
+      new ApiResponse(
+        "User registration successfully, Please Verify Your Account.",
+        user
+      )
+    );
+});
+
+const verifyUserAccount = asyncHandler(async (req, res) => {
+  const { otp } = req.body;
+  if (!otp) throw new ApiError("OTP is required.");
+  const user = await authModel.findOne({ otp });
+  if (!user) throw new ApiError("OTP is not corrected.");
+  if (user.otpexpiry < Date.now()) throw new ApiError("Otp is expiry.");
+  user.isVerify = true;
+  user.otp = null;
+  user.otpexpiry = null;
+  res
+    .status(200)
+    .json(new ApiResponse("Your account is verified successfully."));
+});
+
+const resendOtpforVerify = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await authModel.findOne({ email });
+  if (user.isVerify) throw new ApiError("Your account is already verified.");
+  let otprandom = Math.floor(Math.random() * 9999);
+  const otp = otprandom.toString().padEnd(4, "0");
+  const time = new Date(Date.now() + 5 * 60 * 1000);
+  user.otp = otp;
+  user.otpexpiry = time;
+  await user.save();
+  await emailConfig(email, "Verify your account.", verifyAccount(otp));
+  res
+    .status(200)
+    .json(new ApiResponse("Please check your email address for otp."));
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -312,4 +354,6 @@ module.exports = {
   decreaseCart,
   emptyCart,
   passwordChangeFromOld,
+  verifyUserAccount,
+  resendOtpforVerify,
 };
