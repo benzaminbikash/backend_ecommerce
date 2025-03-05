@@ -16,15 +16,7 @@ var bannerSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  weight: {
-    type: Number,
-    required: true,
-  },
   image: {
-    type: String,
-    required: true,
-  },
-  submit: {
     type: String,
     required: true,
   },
