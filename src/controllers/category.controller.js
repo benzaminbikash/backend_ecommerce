@@ -25,7 +25,7 @@ const addCategory = asyncHandler(async (req, res) => {
 });
 
 const getCategories = asyncHandler(async (req, res) => {
-  const category = await categoryModel.find();
+  const category = await categoryModel.find().sort("order");
   res.status(200).json(new ApiResponse("All categories", category));
 });
 

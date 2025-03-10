@@ -24,21 +24,27 @@ const subcategory = require("./src/routes/subcategory.route");
 const contact = require("./src/routes/contact.route");
 const address = require("./src/routes/address.route");
 const order = require("./src/routes/order.route");
+const blog = require("./src/routes/blog.route");
 
 // // Middleware
 server.use(
   cors({
-    origin: true,
+    origin: [
+      "http://localhost:5173",
+      "http://0.0.0.0:5173",
+      "http://192.168.18.70:5173",
+    ],
+    methods: ["PUT", "GET", "DELETE", "POST"],
     credentials: true,
   })
 );
 server.use(morgan("dev"));
 server.use(express.json());
-server.use(express.urlencoded({ extended: true }));
 server.use("/uploads", express.static("uploads"));
 server.use(cookieParser());
 
 // app route middleware
+server.use("/api/v4", blog);
 server.use("/api/v4", categoryRoute);
 server.use("/api/v4", productRoute);
 server.use("/api/v4", authRoute);
@@ -61,9 +67,13 @@ server.use(errorMiddleware);
 mongoose
   .connect(process.env.MONGODBURL)
   .then(() => {
-    server.listen(PORT, () => {
-      console.log("server listening on: " + PORT);
-    });
+    server.listen(
+      PORT,
+      //  "192.168.1.69",
+      () => {
+        console.log("server listening on: " + PORT);
+      }
+    );
   })
   .catch((error) => {
     console.log(error);

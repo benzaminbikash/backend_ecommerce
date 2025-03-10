@@ -61,6 +61,7 @@ const verifyUserAccount = asyncHandler(async (req, res) => {
 
 const resendOtpforVerify = asyncHandler(async (req, res) => {
   const { email } = req.body;
+  if (!email) throw new ApiError("Email is required.");
   const user = await authModel.findOne({ email });
   if (user.isVerify) throw new ApiError("Your account is already verified.");
   let otprandom = Math.floor(Math.random() * 9999);

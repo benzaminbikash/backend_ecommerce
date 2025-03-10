@@ -56,6 +56,11 @@ const productSchema = new mongoose.Schema(
     orderIndex: {
       type: Number,
     },
+    rating: {
+      type: Number,
+      min: [1, "The minimum rating is 1."],
+      max: [5, "The maxium rating is 5."],
+    },
   },
   {
     timestamps: true,
