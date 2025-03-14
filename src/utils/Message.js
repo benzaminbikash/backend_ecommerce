@@ -65,4 +65,69 @@ function verifyAccount(otp) {
   return html;
 }
 
-module.exports = { EmailMessage, OTPMessage, verifyAccount };
+function EmailMessage(name, email, message) {
+  const html = `
+  <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+
+    <h2 style="color: #333; text-align: center;">New Contact Message</h2>
+    <p style="font-size: 16px; color: #555; text-align: center;">
+      You have received a new message from <strong>${name}</strong> (<a href="mailto:${email}">${email}</a>).
+    </p>
+    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+      <p style="font-size: 16px; color: #333; text-align: center;">
+        "${message}"
+      </p>
+    </div>
+    <p style="font-size: 16px; color: #555; text-align: center;">
+      Please respond to this message as soon as possible.
+    </p>
+    <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
+  </div>
+  `;
+
+  return html;
+}
+
+function OrderSend(name, checkproduct) {
+  const html = `
+  <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+
+    <h2 style="color: #333; text-align: center;"> Mr/Mrs ${name} Your order is pending.</h2>
+    <p style="font-size: 16px; color: #555; text-align: center;">
+      You have ordered ${checkproduct}.
+    </p>
+    <p style="font-size: 16px; color: #555; text-align: center;">
+    We'll reach as soon as possible.
+    </p>
+    <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
+  </div>
+  `;
+
+  return html;
+}
+
+function OrderStatusChange(name, checkproduct, status) {
+  const html = `
+  <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px;">
+
+    <h2 style="color: #333; text-align: center;"> Mr/Mrs ${name} Your order is ${status}.</h2>
+    <p style="font-size: 16px; color: #555; text-align: center;">
+      You have ordered ${checkproduct}.
+    </p>
+    <p style="font-size: 16px; color: #555; text-align: center;">
+    We'll reach as soon as possible.
+    </p>
+    <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
+  </div>
+  `;
+
+  return html;
+}
+
+module.exports = {
+  EmailMessage,
+  OTPMessage,
+  verifyAccount,
+  OrderSend,
+  OrderStatusChange,
+};

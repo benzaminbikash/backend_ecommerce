@@ -14,6 +14,6 @@ const subCategorySchema = new mongoose.Schema({
 });
 
 const subCategoryModel = mongoose.model("SubCategory", subCategorySchema);
-subCategoryModel.createIndexes();
+// subCategoryModel.createIndexes();
 
 module.exports = { subCategoryModel };
