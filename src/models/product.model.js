@@ -55,6 +55,9 @@ const productSchema = new mongoose.Schema(
     orderIndex: {
       type: Number,
     },
+    video: {
+      type: String,
+    },
     rating: {
       type: Number,
       min: [1, "The minimum rating is 1."],
