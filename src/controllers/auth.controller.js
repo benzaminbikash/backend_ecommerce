@@ -337,6 +337,37 @@ const passwordChangeFromOld = asyncHandler(async (req, res) => {
   }
 });
 
+const loginWithGoogle = asyncHandler(async (req, res) => {
+  const { email, fullname, isVerify, profilepicture } = req.body;
+  const checkuser = await authModel.findOne({ email: email });
+  if (checkuser) {
+    const token = await checkuser.generateAccesstoken();
+    const refreshtoken = await checkuser.generaterefreshtoken();
+    res.status(200).json({
+      accessToken: token,
+      refreshToken: refreshtoken,
+      data: checkuser,
+    });
+  } else {
+    const user = await authModel.create({
+      email,
+      fullname,
+      isVerify,
+      profilepicture,
+    });
+    const token = await user.generateAccesstoken();
+    const refreshtoken = await user.generaterefreshtoken();
+    const data = await authModel
+      .findById(user._id)
+      .select("-password -term -cart -forgetPassword");
+    res.status(200).json({
+      accessToken: token,
+      refreshToken: refreshtoken,
+      data: data,
+    });
+  }
+});
+
 module.exports = {
   registration,
   login,
@@ -357,4 +388,5 @@ module.exports = {
   passwordChangeFromOld,
   verifyUserAccount,
   resendOtpforVerify,
+  loginWithGoogle,
 };

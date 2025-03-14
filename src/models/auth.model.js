@@ -40,7 +40,6 @@ const authSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
       unique: true,
       validate: {
         validator: function (phone) {
@@ -51,7 +50,6 @@ const authSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
     term: {
       type: String,

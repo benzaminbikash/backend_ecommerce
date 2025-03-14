@@ -14,6 +14,9 @@ router.route("/logout").get(auth.logout);
 router.route("/verify-account").put(auth.verifyUserAccount);
 router.route("/resend-otp").put(auth.resendOtpforVerify);
 
+// login with google
+router.post("/login-google", auth.loginWithGoogle);
+
 // information
 router.get("/allusers", authMiddleware, adminMiddleware, auth.getUsersByAdmin);
 router.get("/user", authMiddleware, auth.userInfo);
