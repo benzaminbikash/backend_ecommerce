@@ -15,7 +15,12 @@ const contactMessage = asyncHandler(async (req, res) => {
     "Contact Us Message",
     EmailMessage(name, email, message)
   );
-  res.status(200).json(new ApiResponse("Message send successfully.", contact));
+  res.status(201).json(new ApiResponse("Message send successfully.", contact));
 });
 
-module.exports = { contactMessage };
+const getAllContact = asyncHandler(async (req, res) => {
+  const contact = await contactModel.find();
+  res.status(200).json(new ApiResponse("All contact.", contact));
+});
+
+module.exports = { contactMessage, getAllContact };
