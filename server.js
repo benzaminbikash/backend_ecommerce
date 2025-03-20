@@ -25,6 +25,7 @@ const contact = require("./src/routes/contact.route");
 const address = require("./src/routes/address.route");
 const order = require("./src/routes/order.route");
 const blog = require("./src/routes/blog.route");
+const coupon = require("./src/routes/coupon.route");
 
 // // Middleware
 server.use(
@@ -58,6 +59,7 @@ server.use("/api/v4", subcategory);
 server.use("/api/v4", contact);
 server.use("/api/v4", address);
 server.use("/api/v4", order);
+server.use("/api/v4", coupon);
 
 // // Error Middleware
 server.use(notFound);
