@@ -40,7 +40,6 @@ const authSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      unique: true,
       validate: {
         validator: function (phone) {
           return /^(98|97|96)\d{8}$/.test(phone);

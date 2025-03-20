@@ -339,6 +339,7 @@ const passwordChangeFromOld = asyncHandler(async (req, res) => {
 
 const loginWithGoogle = asyncHandler(async (req, res) => {
   const { email, fullname, isVerify, profilepicture } = req.body;
+  console.log(req.body);
   const checkuser = await authModel.findOne({ email: email });
   if (checkuser) {
     const token = await checkuser.generateAccesstoken();
@@ -354,6 +355,7 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
       fullname,
       isVerify,
       profilepicture,
+      term: true,
     });
     const token = await user.generateAccesstoken();
     const refreshtoken = await user.generaterefreshtoken();
