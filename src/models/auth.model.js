@@ -46,6 +46,8 @@ const authSchema = new mongoose.Schema(
         },
         message: "Phone number is not valid.",
       },
+      min: [10, "The phone number must be 10."],
+      max: [10, "The phone number must be 10."],
     },
     password: {
       type: String,
@@ -69,7 +71,7 @@ const authSchema = new mongoose.Schema(
     profilepicture: {
       type: String,
     },
-    // verify logic
+
     isVerify: {
       type: Boolean,
       default: false,

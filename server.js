@@ -46,6 +46,7 @@ server.use(cookieParser());
 
 // app route middleware
 server.use("/api/v4", blog);
+server.use("/api/v4", coupon);
 server.use("/api/v4", categoryRoute);
 server.use("/api/v4", productRoute);
 server.use("/api/v4", authRoute);
@@ -59,7 +60,6 @@ server.use("/api/v4", subcategory);
 server.use("/api/v4", contact);
 server.use("/api/v4", address);
 server.use("/api/v4", order);
-server.use("/api/v4", coupon);
 
 // // Error Middleware
 server.use(notFound);

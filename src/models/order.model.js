@@ -52,6 +52,9 @@ var orderModel = new mongoose.Schema(
       enum: ["Pending", "Confirm", "Processing", "Delivered", "Cancel"],
       default: "Pending",
     },
+    priceaftercoupon: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
