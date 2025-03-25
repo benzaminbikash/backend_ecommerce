@@ -23,4 +23,9 @@ const getAllContact = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse("All contact.", contact));
 });
 
-module.exports = { contactMessage, getAllContact };
+const deleteContact = asyncHandler(async (req, res) => {
+  const contact = await contactModel.findByIdAndDelete(req.params.id);
+  res.status(200).json(new ApiResponse("Deleted contact.", contact));
+});
+
+module.exports = { contactMessage, getAllContact, deleteContact };
