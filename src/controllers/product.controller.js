@@ -38,7 +38,6 @@ const getProducts = asyncHandler(async (req, res) => {
     query = query.where("title", new RegExp(queryObj.title, "i"));
   }
   if (query.category) {
-    console.log(category);
     query = query.where("category", new RegExp(queryObj.category, "i"));
   }
   if (req.query.sort) {

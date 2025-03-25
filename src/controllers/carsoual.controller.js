@@ -11,8 +11,6 @@ const addCarsoual = asyncHandler(async (req, res) => {
   req.files.map((item) => {
     data.push(item.filename);
   });
-
-  console.log(data);
   if (data.length == 0) throw new ApiError("Image must be atleast one.");
   const carsoual = await carsoualModel.create({
     title: title,

@@ -99,7 +99,7 @@ const login = asyncHandler(async (req, res) => {
 
 const refresh = asyncHandler(async (req, res) => {
   const cookies = req.body.refreshToken;
-  console.log("cookies", cookies);
+
   if (!cookies) throw new ApiError("Not authorized/No Refresh Token.", 400);
   try {
     const decoded = jwt.verify(cookies, process.env.Refreshtoken);
@@ -220,7 +220,6 @@ const changePassword = asyncHandler(async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { id } = req.params;
-  console.log("ID of delete user", id);
   const user = await authModel.findByIdAndDelete(id);
   res.status(200).json(new ApiResponse("User Deleted successfully.", user));
 };
@@ -339,7 +338,6 @@ const passwordChangeFromOld = asyncHandler(async (req, res) => {
 
 const loginWithGoogle = asyncHandler(async (req, res) => {
   const { email, fullname, isVerify, profilepicture } = req.body;
-  console.log(req.body);
   const checkuser = await authModel.findOne({ email: email });
   if (checkuser) {
     const token = await checkuser.generateAccesstoken();
